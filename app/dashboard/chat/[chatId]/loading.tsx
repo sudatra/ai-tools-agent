@@ -1,6 +1,6 @@
 import React from 'react'
 
-const loading = () => {
+const Loading = () => {
   const numMessages = Math.floor(Math.random() * 5) + 2;
 
   return (
@@ -36,4 +36,4 @@ const loading = () => {
   )
 }
 
-export default loading
+export default Loading
