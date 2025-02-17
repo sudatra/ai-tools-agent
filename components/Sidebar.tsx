@@ -7,7 +7,7 @@ import { PlusIcon } from 'lucide-react';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import ChatRow from './ui/ChatRow';
+import ChatRow from './ChatRow'
 
 const Sidebar = () => {
   const router = useRouter();
@@ -15,8 +15,6 @@ const Sidebar = () => {
   const createChat = useMutation(api.chats.createChat);
   const deleteChat = useMutation(api.chats.deleteChat);
   const chats = useQuery(api.chats.listChats);
-
-  console.log(chats)
 
   const handleClick = () => {
     closeMobileNav();

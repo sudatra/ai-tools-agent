@@ -2,7 +2,7 @@ import { Doc, Id } from '@/convex/_generated/dataModel'
 import { NavigationContext } from '@/lib/context/NavigationProvider';
 import { useRouter } from 'next/navigation'
 import React, { use } from 'react'
-import { Button } from './button';
+import { Button } from './ui/button';
 import { TrashIcon } from 'lucide-react';
 
 const ChatRow = ({ chat, onDelete }: { chat: Doc<"chats">, onDelete: (id: Id<"chats">) => void }) => {
