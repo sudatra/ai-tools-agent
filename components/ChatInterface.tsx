@@ -1,28 +1,85 @@
 'use client'
 
 import { Doc, Id } from '@/convex/_generated/dataModel'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button';
 import { ArrowRight } from 'lucide-react';
+import { ChatRequestBody } from '@/lib/types';
 
 interface ChatInterfaceProps {
   chatId: Id<'chats'>;
   initialMessages: Doc<'messages'>[];
 }
 
+interface ToolProps {
+  name: string;
+  input: unknown;
+}
+
 const ChatInterface = ({ chatId, initialMessages }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Doc<'messages'>[]>(initialMessages);
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [streamedResponses, setStreamedResponses] = useState('');
+  const [currentTool, setCurrentTool] = useState<ToolProps | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, streamedResponses]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedInput = input.trim();
+    if(!trimmedInput || isLoading) {
+      return;
+    }
+
+    setInput('');
+    setStreamedResponses('');
+    setCurrentTool(null);
+    setIsLoading(true);
+
+    const optimisticUserMessage: Doc<'messages'> = {
+      _id: `temp_${Date.now()}`,
+      chatId,
+      content: trimmedInput,
+      role: 'user',
+      createdAt: Date.now(),
+    } as Doc<'messages'>;
+
+    setMessages((prev) => [...prev, optimisticUserMessage]);
+    let fullResponse = '';
+
+    try {
+      const requestBody: ChatRequestBody = {
+        messages: messages.map((message) => ({
+          role: message.role,
+          content: message.content
+        })),
+        newMessage: trimmedInput,
+        chatId
+      }
+    }
+    catch(error) {
+
+    }
   }
 
   return (
     <main className='flex flex-col h-[calc(100vh-theme(spacing.14))]'>
       <section className='flex-1'>
+        <div>
+          {
+            messages.map((message) => (
+              <div key={message._id}>
+                {message.content}
+              </div>
+            ))
+          }
+        </div>
 
+        <div ref={messagesEndRef} />
       </section>
 
       <footer className='border-t bg-white p-4'>
