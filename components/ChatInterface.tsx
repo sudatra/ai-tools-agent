@@ -60,9 +60,30 @@ const ChatInterface = ({ chatId, initialMessages }: ChatInterfaceProps) => {
         newMessage: trimmedInput,
         chatId
       }
+
+      const response = await fetch('/api/chat/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      if(!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      if(!response.body) {
+        throw new Error('No Response Body Available');
+      }
+
+      //TODO: Handle stream
     }
     catch(error) {
+      console.error('Error Sending Messages', error);
+      setMessages((prev) => 
+        prev.filter((msg) => msg._id !== optimisticUserMessage._id)
+      )
 
+      setStreamedResponses('error');
     }
   }
 
