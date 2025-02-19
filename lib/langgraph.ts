@@ -1,5 +1,14 @@
 import { ChatAnthropic } from '@langchain/anthropic';
-import { ChatOpenAI } from '@langchain/openai';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import wxflows from '@wxflows/sdk/langchain';
+
+const toolClient = new wxflows({
+  endpoint: process.env.WXFLOWS_ENDPOINT || '',
+  apikey: process.env.WXFLOWS_API_KEY
+});
+
+const tools = await toolClient.lcTools;
+const toolNode = new ToolNode(tools);
 
 const initializeAnthropicModel = () => {
   const model = new ChatAnthropic({
@@ -23,6 +32,11 @@ const initializeAnthropicModel = () => {
       }
     ]
   })
+  .bindTools(tools);
 
   return model;
+}
+
+const createWorkflow = () => {
+  
 }
