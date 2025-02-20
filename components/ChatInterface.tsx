@@ -209,7 +209,7 @@ const ChatInterface = ({ chatId, initialMessages }: ChatInterfaceProps) => {
         formatTerminalOutput(
           'error',
           'Failed to Process Message',
-          error instanceof Error ? error.message : 'Unknow error'
+          error instanceof Error ? error.message : 'Unknown error'
         )
       );
     }
