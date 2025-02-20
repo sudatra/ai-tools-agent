@@ -1,9 +1,9 @@
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import wxflows from '@wxflows/sdk/langchain';
-import { START, END, MessagesAnnotation, StateGraph } from '@langchain/langgraph';
+import { START, END, MessagesAnnotation, StateGraph, MemorySaver } from '@langchain/langgraph';
 import SYSTEM_MESSAGE from '@/constants/systemMessage';
-import { AIMessage, SystemMessage, trimMessages } from '@langchain/core/messages';
+import { AIMessage, BaseMessage, SystemMessage, trimMessages } from '@langchain/core/messages';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 
 const trimmer = trimMessages({
@@ -89,4 +89,24 @@ const createWorkflow = () => {
   .addEdge('tools', 'agent');
 
   return stateGraph;
+}
+
+export const submitQuestion = async (messages: BaseMessage[], chatId: string) => {
+  const workflow = createWorkflow();
+  const checkpointer = new MemorySaver();
+
+  const app = workflow.compile({ checkpointer });
+  const stream = await app.streamEvents(
+    { messages: messages },
+    {
+      version: 'v2',
+      configurable: {
+        thread_id: chatId
+      },
+      streamMode: 'messages',
+      runId: chatId
+    }
+  );
+
+  return stream;
 }
