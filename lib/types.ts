@@ -50,13 +50,13 @@ export interface DoneMessage extends BaseStreamMessage {
 
 export interface ToolStartMessage extends BaseStreamMessage {
   type: StreamMessageType.ToolStart;
-  token: string;
+  tool: string;
   input: unknown;
 }
 
 export interface ToolEndMessage extends BaseStreamMessage {
   type: StreamMessageType.ToolEnd;
-  token: string;
+  tool: string;
   output: unknown;
 }
 
