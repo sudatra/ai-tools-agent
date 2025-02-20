@@ -131,7 +131,7 @@ export const submitQuestion = async (messages: BaseMessage[], chatId: string) =>
 
   const app = workflow.compile({ checkpointer });
   const stream = await app.streamEvents(
-    { messages: messages },
+    { messages: cachedMessages },
     {
       version: 'v2',
       configurable: {
