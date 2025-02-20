@@ -3,7 +3,7 @@ import { ToolNode } from '@langchain/langgraph/prebuilt';
 import wxflows from '@wxflows/sdk/langchain';
 import { START, END, MessagesAnnotation, StateGraph, MemorySaver } from '@langchain/langgraph';
 import SYSTEM_MESSAGE from '@/constants/systemMessage';
-import { AIMessage, BaseMessage, SystemMessage, trimMessages } from '@langchain/core/messages';
+import { AIMessage, BaseMessage, HumanMessage, SystemMessage, trimMessages } from '@langchain/core/messages';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 
 const trimmer = trimMessages({
@@ -91,7 +91,41 @@ const createWorkflow = () => {
   return stateGraph;
 }
 
+const addCachingHeaders = (messages: BaseMessage[]): BaseMessage[] => {
+  if(!messages.length) {
+    return messages;
+  }
+
+  const cachedMessages = [...messages];
+  const addCache = (message: BaseMessage) => {
+    message.content = [
+      {
+        type: 'text',
+        text: message.content as string,
+        cache_control: { type: 'ephemeral' }
+      }
+    ]
+  }
+
+  addCache(cachedMessages.at(-1)!);
+
+  let humanMessageCount = 0;
+  for(let i = cachedMessages.length - 1; i >= 0; i--) {
+    if(cachedMessages[i] instanceof HumanMessage) {
+      humanMessageCount++;
+    }
+
+    if(humanMessageCount === 2) {
+      addCache(cachedMessages[i]);
+      break;
+    }
+  }
+
+  return cachedMessages;
+}
+
 export const submitQuestion = async (messages: BaseMessage[], chatId: string) => {
+  const cachedMessages = addCachingHeaders(messages);
   const workflow = createWorkflow();
   const checkpointer = new MemorySaver();
 
