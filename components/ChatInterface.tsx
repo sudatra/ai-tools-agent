@@ -8,6 +8,7 @@ import { ChatRequestBody, StreamMessageType } from '@/lib/types';
 import { createSSEParser } from '@/lib/createSSEParser';
 import { getConvexClient } from '@/lib/convex';
 import { api } from '@/convex/_generated/api';
+import MessageBubble from './MessageBubble';
 
 interface ChatInterfaceProps {
   chatId: Id<'chats'>;
@@ -223,15 +224,24 @@ const ChatInterface = ({ chatId, initialMessages }: ChatInterfaceProps) => {
       <section className='flex-1 overflow-y-auto bg-gray-50 p-2 md:p-0'>
         <div className='max-w-4xl mx-auto p-4 space-y-3'>
           {
-            messages.map((message) => (
-              <div key={message._id}>
-                {message.content}
-              </div>
+            messages.map((message: Doc<'messages'>) => (
+              <MessageBubble 
+                key={message._id}
+                content={message.content}
+                isUser={message.role === 'user'}
+              />
             ))
           }
+
+          {
+            streamedResponses && (
+              <MessageBubble content={streamedResponses} />
+            )
+          }
+
+          <div ref={messagesEndRef} />
         </div>
 
-        <div ref={messagesEndRef} />
       </section>
 
       <footer className='border-t bg-white p-4'>
