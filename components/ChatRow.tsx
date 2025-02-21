@@ -4,10 +4,14 @@ import { useRouter } from 'next/navigation'
 import React, { use } from 'react'
 import { Button } from './ui/button';
 import { TrashIcon } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import TimeAgo from 'react-timeago';
 
 const ChatRow = ({ chat, onDelete }: { chat: Doc<"chats">, onDelete: (id: Id<"chats">) => void }) => {
   const router = useRouter();
   const { closeMobileNav } = use(NavigationContext);
+  const lastMessage = useQuery(api.messages.getLastMessage, { chatId: chat._id });
 
   const handleClick = () => {
     router.push(`/dashboard/chat/${chat._id}`);
@@ -22,7 +26,18 @@ const ChatRow = ({ chat, onDelete }: { chat: Doc<"chats">, onDelete: (id: Id<"ch
     >
       <div className='p-4'>
         <div className='flex justify-between items-start'>
-          New Chat
+          <p className='text-sm text-gray-600 truncate flex-1 font-medium'>
+            {
+              lastMessage ? (
+                <>
+                  {lastMessage.role === 'user' ? 'You: ' : 'Agent: '}
+                  {lastMessage.content.replace(/\\n/g, '\n')}
+                </>
+              ) : (
+                <span className='text-gray-400'>New Chat</span>
+              )
+            }
+          </p>
 
           <Button
             variant='ghost'
@@ -37,13 +52,13 @@ const ChatRow = ({ chat, onDelete }: { chat: Doc<"chats">, onDelete: (id: Id<"ch
           </Button>
         </div>
 
-        {/* {
+        {
           lastMessage && (
             <p className='text-xs text-gray-400 mt-1.5 font-medium'>
               <TimeAgo date={lastMessage.createdAt} />
             </p>
           )
-        } */}
+        }
       </div>
     </div>
   )
