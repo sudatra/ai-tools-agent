@@ -239,6 +239,26 @@ const ChatInterface = ({ chatId, initialMessages }: ChatInterfaceProps) => {
             )
           }
 
+          {
+            isLoading && !streamedResponses && (
+              <div className='flex justify-start animate-in fade-in-0'>
+                <div className='rounded-2xl px-4 py-3 bg-white text-gray-900 rounded-bl-none shadow-sm ring-1 ring-inset ring-gray-200'>
+                  <div className='flex items-center gap-1.5'>
+                    {
+                      [0.3, 0.15, 0].map((delay, i) => (
+                        <div
+                          key={i}
+                          className='size-1.5 rounded-full bg-gray-400 animate-bounce'
+                          style={{ animationDelay: `${delay}s` }}
+                        />
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+            )
+          }
+
           <div ref={messagesEndRef} />
         </div>
 

@@ -22,7 +22,7 @@ const ChatRow = ({ chat, onDelete }: { chat: Doc<"chats">, onDelete: (id: Id<"ch
     >
       <div className='p-4'>
         <div className='flex justify-between items-start'>
-          chat-msg
+          New Chat
 
           <Button
             variant='ghost'

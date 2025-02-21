@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       }
     });
 
-    const startStream = async () => {
+    (async () => {
       try {
         await sendSSEMessage(writer, { type: StreamMessageType.Connected });
         await convex.mutation(api.messages.send, {
@@ -82,9 +82,9 @@ export async function POST(req: Request) {
                 output: toolMessage
               });
             }
-
-            await sendSSEMessage(writer, { type: StreamMessageType.Done });
           }
+
+          await sendSSEMessage(writer, { type: StreamMessageType.Done });
         }
         catch(streamError) {
           console.error('Error in Event stream', streamError);
@@ -109,9 +109,8 @@ export async function POST(req: Request) {
           console.error('Error closing writer', closeError);
         }
       }
-    };
+    })();
 
-    startStream();
     return response;
   }
   catch(error) {
