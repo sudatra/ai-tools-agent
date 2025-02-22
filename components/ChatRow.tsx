@@ -6,7 +6,16 @@ import { Button } from './ui/button';
 import { TrashIcon } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import TimeAgo from 'react-timeago';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime); 
+
+const TimeComponent = ({ timestamp }: { timestamp: number }) => {
+  return (
+    <span>{dayjs(timestamp).fromNow()}</span>
+  )
+}
 
 const ChatRow = ({ chat, onDelete }: { chat: Doc<"chats">, onDelete: (id: Id<"chats">) => void }) => {
   const router = useRouter();
@@ -55,7 +64,7 @@ const ChatRow = ({ chat, onDelete }: { chat: Doc<"chats">, onDelete: (id: Id<"ch
         {
           lastMessage && (
             <p className='text-xs text-gray-400 mt-1.5 font-medium'>
-              <TimeAgo date={lastMessage.createdAt} />
+              <TimeComponent timestamp={lastMessage.createdAt} />
             </p>
           )
         }
