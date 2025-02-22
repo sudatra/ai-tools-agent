@@ -38,7 +38,7 @@ const initializeAnthropicModel = () => {
         handleLLMStart: async () => {
           console.log("Starting LLM");
         },
-        handleLLMEnd: async (output) => {
+        handleLLMEnd: async () => {
           console.log("End LLM Call");
         }
       }
