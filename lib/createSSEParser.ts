@@ -22,6 +22,7 @@ export const createSSEParser = () => {
         return Object.values(StreamMessageType).includes(parsed.type) ? parsed : null;
       }
       catch(error) {
+        console.log("error: ", error);
         return {
           type: StreamMessageType.Error,
           error: 'Failed to parse SSE MEssage'

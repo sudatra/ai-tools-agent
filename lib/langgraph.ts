@@ -40,7 +40,6 @@ const initializeAnthropicModel = () => {
         },
         handleLLMEnd: async (output) => {
           console.log("End LLM Call");
-          const usage = output.llmOutput?.usage;
         }
       }
     ]
